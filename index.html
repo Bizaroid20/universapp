@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>UNIVERSE</title>
+<meta name="theme-color" content="#e8281e">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root { --t:.3s cubic-bezier(.4,0,.2,1); --r:16px; --rs:8px; }
+body[data-u="films"]  { --bg1:#0a0000;--bg2:#1a0505;--ac:#e8281e;--ac2:#ff6b5e;--cb:rgba(30,8,8,.9);--cb2:rgba(232,40,30,.2);--tx:#f5e6e6;--td:#a88080;--nb:rgba(10,0,0,.95);--gl:rgba(232,40,30,.3); }
+body[data-u="series"] { --bg1:#00050f;--bg2:#080520;--ac:#6c5ce7;--ac2:#a29bfe;--cb:rgba(12,8,35,.9);--cb2:rgba(108,92,231,.2);--tx:#e8e4ff;--td:#8b83c4;--nb:rgba(0,5,15,.95);--gl:rgba(108,92,231,.3); }
+body[data-u="livres"] { --bg1:#010a04;--bg2:#061408;--ac:#27ae60;--ac2:#6fcf97;--cb:rgba(4,18,8,.9);--cb2:rgba(39,174,96,.2);--tx:#e6f4ec;--td:#7aab8f;--nb:rgba(1,10,4,.95);--gl:rgba(39,174,96,.3); }
+body[data-u="jeux"]   { --bg1:#050200;--bg2:#120800;--ac:#f39c12;--ac2:#fdcb6e;--cb:rgba(20,10,0,.9);--cb2:rgba(243,156,18,.2);--tx:#fff8ec;--td:#b09060;--nb:rgba(5,2,0,.95);--gl:rgba(243,156,18,.3); }
+*,*::before,*::after { box-sizing:border-box;margin:0;padding:0; }
+body { font-family:'DM Sans',sans-serif;background:var(--bg1);color:var(--tx);min-height:100vh; }
+body::before { content:'';position:fixed;inset:0;z-index:-1;background:radial-gradient(ellipse 70% 50% at 15% 15%,var(--gl) 0%,transparent 60%),radial-gradient(ellipse 50% 40% at 85% 85%,var(--gl) 0%,transparent 50%),linear-gradient(135deg,var(--bg1),var(--bg2)); }
+::-webkit-scrollbar{width:4px} ::-webkit-scrollbar-track{background:var(--bg1)} ::-webkit-scrollbar-thumb{background:var(--ac);border-radius:2px}
+
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:var(--nb);backdrop-filter:blur(20px);border-bottom:1px solid var(--cb2);height:60px;display:flex;align-items:center;gap:6px;padding:0 12px;transition:background var(--t); }
+.nlogo { font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:4px;color:var(--ac);flex-shrink:0;margin-right:4px; }
+.ntabs { display:flex;gap:3px;flex:1;overflow-x:auto;scrollbar-width:none; }
+.ntabs::-webkit-scrollbar { display:none }
+.ntab { display:flex;align-items:center;gap:4px;padding:5px 11px;border:1px solid transparent;border-radius:100px;background:transparent;color:var(--td);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;transition:all var(--t); }
+.ntab:hover { color:var(--tx);background:rgba(255,255,255,.06) }
+.ntab.on { background:var(--ac);color:#fff }
+.nbtn { width:34px;height:34px;border-radius:50%;border:1px solid var(--cb2);background:var(--cb);color:var(--tx);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all var(--t); }
+.nbtn:hover { background:var(--ac) }
+
+main { max-width:1400px;margin:0 auto;padding:72px 12px 40px; }
+.uhead { display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:18px;gap:12px;flex-wrap:wrap; }
+.utitle { font-family:'Bebas Neue',sans-serif;font-size:clamp(36px,7vw,72px);line-height:.9;letter-spacing:2px; }
+.utitle span { display:block;font-size:.32em;font-family:'DM Sans',sans-serif;font-weight:300;letter-spacing:6px;color:var(--ac);text-transform:uppercase;margin-bottom:4px; }
+.ustats { display:flex;gap:7px;flex-wrap:wrap; }
+.spill { background:var(--cb);border:1px solid var(--cb2);border-radius:100px;padding:5px 13px;font-size:12px;color:var(--td); }
+.spill strong { color:var(--ac);font-size:14px;margin-right:3px; }
+
+.fbar { display:flex;gap:5px;flex-wrap:wrap;margin-bottom:16px; }
+.fbtn { padding:5px 12px;border-radius:100px;border:1px solid var(--cb2);background:var(--cb);color:var(--td);font-size:12px;cursor:pointer;transition:all var(--t); }
+.fbtn:hover { color:var(--tx);border-color:var(--ac) }
+.fbtn.on { background:var(--ac);color:#fff;border-color:var(--ac) }
+.fbtn.heart.on { background:#e84393;border-color:#e84393 }
+.fsel { padding:5px 12px;border-radius:100px;border:1px solid var(--cb2);background:var(--cb);color:var(--td);font-size:12px;cursor:pointer;outline:none; }
+.fsel option { background:var(--bg1) }
+
+.slabel { font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:3px;color:var(--td);margin-bottom:12px;padding-bottom:5px;border-bottom:1px solid var(--cb2); }
+.slabel span { color:var(--ac) }
+
+.grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:12px;margin-bottom:28px; }
+
+.card { background:var(--cb);border:1px solid var(--cb2);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:all var(--t);position:relative; }
+.card:hover { transform:translateY(-4px);border-color:var(--ac);box-shadow:0 14px 40px var(--gl) }
+.ccover { width:100%;aspect-ratio:2/3;background:var(--bg2);position:relative;overflow:hidden; }
+.ccover img { width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s }
+.card:hover .ccover img { transform:scale(1.05) }
+.cph { width:100%;aspect-ratio:2/3;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--bg2),var(--bg1));font-size:38px; }
+.crank { position:absolute;top:7px;left:7px;background:var(--ac);color:#fff;font-family:'Bebas Neue',sans-serif;font-size:13px;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;z-index:2; }
+.cheart { position:absolute;top:7px;right:7px;background:rgba(0,0,0,.6);border:none;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;transition:all var(--t);z-index:2; }
+.cheart.on { background:rgba(232,67,147,.85) }
+.cseen { position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.85));padding:16px 7px 5px;font-size:10px;color:rgba(255,255,255,.9);font-weight:600;z-index:2; }
+.cbody { padding:10px; }
+.ctitle { font-weight:700;font-size:13px;line-height:1.3;margin-bottom:2px;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+.cmeta { font-size:11px;color:var(--td);margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+.crow { display:flex;align-items:center;gap:5px; }
+.cscore { font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--ac);line-height:1; }
+.cscore small { font-size:10px;color:var(--td);font-family:'DM Sans',sans-serif; }
+.cbar { flex:1;height:3px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden; }
+.cbarfill { height:100%;background:var(--ac);border-radius:2px; }
+.cplat { display:inline-block;margin-top:5px;padding:2px 7px;background:rgba(255,255,255,.08);border-radius:100px;font-size:10px;color:var(--td); }
+.cprog { margin-top:5px; }
+.cprog-txt { font-size:10px;color:var(--td);margin-bottom:3px; }
+.cprog-bar { height:3px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden; }
+.cprog-fill { height:100%;background:var(--ac);border-radius:2px; }
+
+.addcard { background:var(--cb);border:2px dashed var(--cb2);border-radius:var(--r);min-height:160px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all var(--t);color:var(--td);font-size:13px;gap:8px; }
+.addcard:hover { border-color:var(--ac);color:var(--ac);transform:scale(1.02) }
+.addicon { width:40px;height:40px;border-radius:50%;border:2px dashed currentColor;display:flex;align-items:center;justify-content:center;font-size:20px; }
+
+.empty { grid-column:1/-1;text-align:center;padding:50px 20px;color:var(--td); }
+.empty .ei { font-size:48px;margin-bottom:10px; }
+.empty h3 { font-size:16px;color:var(--tx); }
+
+.overlay { position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.85);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;padding:12px;opacity:0;pointer-events:none;transition:opacity var(--t); }
+.overlay.on { opacity:1;pointer-events:all }
+.modal { background:var(--bg2);border:1px solid var(--cb2);border-radius:20px;width:100%;max-width:640px;max-height:92vh;overflow-y:auto;transform:translateY(12px) scale(.98);transition:transform var(--t);box-shadow:0 8px 40px rgba(0,0,0,.5),0 0 40px var(--gl); }
+.overlay.on .modal { transform:translateY(0) scale(1) }
+.mhead { padding:18px 18px 13px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--cb2);position:sticky;top:0;background:var(--bg2);z-index:5;border-radius:20px 20px 0 0; }
+.mtitle { font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--ac); }
+.mclose { background:rgba(255,255,255,.08);border:none;border-radius:50%;width:32px;height:32px;color:var(--tx);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all var(--t); }
+.mclose:hover { background:var(--ac) }
+.mbody { padding:16px 18px; }
+.mfoot { padding:13px 18px 18px;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;border-top:1px solid var(--cb2); }
+
+/* SEARCH BOX */
+.search-box { position:relative;margin-bottom:16px; }
+.search-box input { width:100%;padding:11px 44px 11px 14px;background:rgba(255,255,255,.08);border:1px solid var(--cb2);border-radius:var(--rs);color:var(--tx);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color var(--t); }
+.search-box input:focus { border-color:var(--ac) }
+.search-btn { position:absolute;right:8px;top:50%;transform:translateY(-50%);background:var(--ac);border:none;border-radius:6px;width:30px;height:30px;color:#fff;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center; }
+.search-results { margin-bottom:14px;display:none; }
+.search-results.on { display:block }
+.search-result-item { display:flex;align-items:center;gap:10px;padding:9px;border:1px solid var(--cb2);border-radius:10px;cursor:pointer;transition:all var(--t);margin-bottom:6px;background:rgba(255,255,255,.03); }
+.search-result-item:hover { border-color:var(--ac);background:rgba(255,255,255,.07) }
+.sri-cover { width:38px;height:56px;border-radius:5px;object-fit:cover;flex-shrink:0;background:var(--bg1); }
+.sri-cover-ph { width:38px;height:56px;border-radius:5px;background:var(--bg1);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0; }
+.sri-info { flex:1;min-width:0; }
+.sri-title { font-weight:700;font-size:13px;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+.sri-meta { font-size:11px;color:var(--td);margin-top:2px; }
+.search-loading { text-align:center;padding:16px;color:var(--td);font-size:13px; }
+.search-sep { display:flex;align-items:center;gap:9px;margin-bottom:14px; }
+.search-sep span { font-size:11px;color:var(--td);white-space:nowrap; }
+.search-sep::before,.search-sep::after { content:'';flex:1;height:1px;background:var(--cb2); }
+
+.fgrid { display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:16px; }
+.fg { display:flex;flex-direction:column;gap:4px; }
+.fg.full { grid-column:1/-1 }
+label { font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--td); }
+input,select,textarea { background:rgba(255,255,255,.07);border:1px solid var(--cb2);border-radius:var(--rs);padding:8px 11px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color var(--t);width:100%; }
+input:focus,select:focus,textarea:focus { border-color:var(--ac) }
+textarea { resize:vertical;min-height:65px }
+select option { background:var(--bg1);color:var(--tx) }
+
+.seenrow { display:flex;align-items:center;gap:11px;background:rgba(255,255,255,.04);border:1px solid var(--cb2);border-radius:var(--rs);padding:11px;margin-bottom:13px; }
+.tog { position:relative;width:42px;height:23px;flex-shrink:0; }
+.tog input { opacity:0;width:0;height:0;position:absolute; }
+.togslide { position:absolute;inset:0;border-radius:12px;background:rgba(255,255,255,.15);cursor:pointer;transition:all var(--t); }
+.togslide::before { content:'';position:absolute;width:17px;height:17px;border-radius:50%;background:#fff;top:3px;left:3px;transition:transform var(--t); }
+.tog input:checked + .togslide { background:var(--ac) }
+.tog input:checked + .togslide::before { transform:translateX(19px) }
+.seenlbl { font-size:13px;color:var(--tx);flex:1; }
+.seenlbl small { display:block;font-size:11px;color:var(--td);margin-top:1px; }
+.seendate { width:135px;flex-shrink:0;font-size:13px;padding:7px 9px; }
+
+.rbox { background:rgba(255,255,255,.03);border:1px solid var(--cb2);border-radius:var(--r);padding:15px;margin-bottom:15px; }
+.rbox h4 { font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--ac);margin-bottom:11px; }
+.crow2 { display:flex;align-items:center;gap:8px;margin-bottom:10px; }
+.clbl { font-size:12px;color:var(--tx);flex:0 0 auto;width:175px; }
+.clbl small { color:var(--td);font-size:10px;margin-left:2px; }
+.cinp { display:flex;align-items:center;gap:6px;flex:1; }
+.cinp input[type="range"] { flex:1;-webkit-appearance:none;height:5px;background:rgba(255,255,255,.12);border-radius:3px;border:none;padding:0;cursor:pointer;accent-color:var(--ac); }
+.cval { font-family:'Bebas Neue',sans-serif;font-size:15px;color:var(--ac);min-width:38px;text-align:right; }
+.totbox { display:flex;align-items:center;justify-content:center;gap:11px;background:linear-gradient(135deg,var(--ac),var(--ac2));border-radius:11px;padding:12px 16px;margin-top:11px; }
+.totnum { font-family:'Bebas Neue',sans-serif;font-size:40px;color:#fff;line-height:1; }
+.totinfo { color:rgba(255,255,255,.8);font-size:12px; }
+.totinfo strong { display:block;color:#fff;font-size:13px; }
+
+.srow { display:flex;align-items:center;gap:7px;margin-bottom:8px; }
+.slbl2 { font-size:12px;color:var(--tx);flex:0 0 68px; }
+.sinp { display:flex;align-items:center;gap:4px; }
+.sinp input { width:50px;text-align:center;padding:6px 7px; }
+.sep2 { font-size:11px;color:var(--td); }
+
+.drow { display:flex;gap:16px;margin-bottom:16px;flex-wrap:wrap; }
+.dcover { width:110px;flex-shrink:0;border-radius:11px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.5),0 0 20px var(--gl); }
+.dcover img { width:100%;height:100%;object-fit:cover;display:block; }
+.dcph { width:110px;height:160px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--bg2),var(--bg1));font-size:38px;border-radius:11px; }
+.dinfo { flex:1;min-width:150px; }
+.dtitle { font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:2px;color:var(--tx);line-height:1;margin-bottom:7px; }
+.dtags { display:flex;gap:5px;flex-wrap:wrap;margin-bottom:9px; }
+.dtag { padding:3px 9px;background:rgba(255,255,255,.08);border-radius:100px;font-size:11px;color:var(--td); }
+.dtag.seen { background:rgba(39,174,96,.2);color:#6fcf97; }
+.dtag.unseen { background:rgba(255,255,255,.05);color:var(--td); }
+.dscore { font-family:'Bebas Neue',sans-serif;font-size:50px;color:var(--ac);line-height:1; }
+.dscore small { font-size:18px;color:var(--td);font-family:'DM Sans',sans-serif; }
+.dhbtn { padding:7px 15px;border-radius:100px;border:1px solid rgba(232,67,147,.4);background:rgba(232,67,147,.1);color:#e84393;font-size:12px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all var(--t);margin-top:7px; }
+.dhbtn.on { background:#e84393;color:#fff }
+
+.bars { margin-top:11px; }
+.brow { display:flex;align-items:center;gap:8px;margin-bottom:7px; }
+.blbl { font-size:12px;color:var(--tx);flex:0 0 170px; }
+.btrack { flex:1;height:7px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden; }
+.bfill { height:100%;border-radius:4px;background:linear-gradient(90deg,var(--ac),var(--ac2));transition:width 1s; }
+.bval { font-family:'Bebas Neue',sans-serif;font-size:14px;color:var(--ac);min-width:40px;text-align:right; }
+
+.sgrid { display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:7px;margin-top:9px; }
+.sc { background:rgba(255,255,255,.05);border:1px solid var(--cb2);border-radius:9px;padding:9px;text-align:center; }
+.sc .sn { font-family:'Bebas Neue',sans-serif;font-size:17px;color:var(--ac); }
+.sc .sp { font-size:10px;color:var(--td);margin-top:3px; }
+.spb { height:3px;background:rgba(255,255,255,.1);border-radius:2px;margin-top:5px;overflow:hidden; }
+.spbf { height:100%;background:var(--ac);border-radius:2px; }
+
+.radar-wrap { display:flex;justify-content:center;margin:11px 0; }
+canvas { max-width:240px; }
+
+.bkopts { display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:15px; }
+.bkcard { background:rgba(255,255,255,.04);border:1px solid var(--cb2);border-radius:var(--r);padding:18px;text-align:center;cursor:pointer;transition:all var(--t); }
+.bkcard:hover { border-color:var(--ac);background:rgba(255,255,255,.07) }
+.bkcard .bki { font-size:34px;margin-bottom:9px; }
+.bkcard .bkt { font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:2px;color:var(--ac);margin-bottom:4px; }
+.bkcard .bkd { font-size:11px;color:var(--td);line-height:1.5; }
+.bkinfo { background:rgba(255,255,255,.03);border:1px solid var(--cb2);border-radius:var(--rs);padding:13px;font-size:12px;color:var(--td);line-height:1.8; }
+.bkinfo strong { color:var(--tx); }
+
+.btn { background:var(--ac);color:#fff;border:none;border-radius:100px;padding:9px 22px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all var(--t);box-shadow:0 4px 14px var(--gl); }
+.btn:hover { transform:translateY(-1px) }
+.btnd { background:rgba(231,76,60,.15);color:#e74c3c;border:1px solid rgba(231,76,60,.3);border-radius:100px;padding:8px 15px;font-size:13px;cursor:pointer;transition:all var(--t); }
+.btnd:hover { background:rgba(231,76,60,.3) }
+.btns { background:rgba(255,255,255,.08);color:var(--tx);border:1px solid var(--cb2);border-radius:100px;padding:8px 15px;font-size:13px;cursor:pointer;transition:all var(--t); }
+.btns:hover { background:rgba(255,255,255,.12) }
+
+.toast { position:fixed;bottom:20px;right:13px;background:var(--ac);color:#fff;padding:9px 17px;border-radius:100px;font-size:13px;font-weight:500;z-index:999;transform:translateY(80px);opacity:0;transition:all .4s;pointer-events:none; }
+.toast.on { transform:translateY(0);opacity:1 }
+
+.ibanner { position:fixed;bottom:0;left:0;right:0;z-index:500;padding:11px 13px;background:var(--bg2);border-top:1px solid var(--cb2);backdrop-filter:blur(20px);display:flex;align-items:center;gap:10px;transform:translateY(100%);transition:transform .4s; }
+.ibanner.on { transform:translateY(0) }
+.iico { width:42px;height:42px;border-radius:10px;background:var(--ac);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0; }
+.itxt { flex:1; }
+.itxt strong { display:block;font-size:13px;color:var(--tx); }
+.itxt span { font-size:11px;color:var(--td); }
+.iacts { display:flex;gap:5px; }
+.ibtn { background:var(--ac);color:#fff;border:none;border-radius:100px;padding:7px 13px;font-size:12px;font-weight:600;cursor:pointer; }
+.idis { background:rgba(255,255,255,.08);color:var(--td);border:1px solid var(--cb2);border-radius:100px;padding:7px 10px;font-size:12px;cursor:pointer; }
+
+@media(max-width:520px) {
+  .grid { grid-template-columns:repeat(2,1fr);gap:10px }
+  .fgrid { grid-template-columns:1fr }
+  .fg.full { grid-column:1 }
+  .clbl { width:140px;font-size:11px }
+  .blbl { flex:0 0 125px }
+  main { padding:68px 10px 36px }
+}
+</style>
+</head>
+<body data-u="films">
+
+<nav>
+  <div class="nlogo">UNIVERSE</div>
+  <div class="ntabs">
+    <button class="ntab on" onclick="sw('films')">&#127916; Films</button>
+    <button class="ntab" onclick="sw('series')">&#128250; Series</button>
+    <button class="ntab" onclick="sw('livres')">&#128218; Livres</button>
+    <button class="ntab" onclick="sw('jeux')">&#127918; Jeux</button>
+  </div>
+  <button class="nbtn" onclick="openAdd()" title="Ajouter">+</button>
+  <button class="nbtn" onclick="openBk()" title="Sauvegarde">&#128190;</button>
+</nav>
+
+<main>
+  <div class="uhead">
+    <div class="utitle"><span id="usub"></span><div id="utxt"></div></div>
+    <div class="ustats" id="ustats"></div>
+  </div>
+  <div class="fbar" id="fbar"></div>
+  <div id="rankings"></div>
+</main>
+
+<!-- ADD MODAL -->
+<div class="overlay" id="mod-add" onclick="oclk(event,'mod-add')">
+  <div class="modal">
+    <div class="mhead">
+      <div class="mtitle" id="mod-add-title">AJOUTER</div>
+      <button class="mclose" onclick="cm('mod-add')">&#x2715;</button>
+    </div>
+    <div class="mbody">
+      <!-- SEARCH (films/series only) -->
+      <div id="search-section">
+        <div class="search-box">
+          <input type="text" id="search-input" placeholder="Rechercher un titre..." onkeyup="onSearchKey(event)">
+          <button class="search-btn" onclick="doSearch()">&#128269;</button>
+        </div>
+        <div class="search-results" id="search-results"></div>
+        <div class="search-sep"><span>ou remplir manuellement</span></div>
+      </div>
+      <div class="fgrid" id="ffields"></div>
+      <div class="seenrow">
+        <label class="tog"><input type="checkbox" id="f-seen" onchange="tsd()"><span class="togslide"></span></label>
+        <div class="seenlbl"><span id="seen-lbl">Termine</span><small id="seen-sub">Cochez si termine</small></div>
+        <input type="date" id="f-sdate" class="seendate" style="display:none">
+      </div>
+      <div class="rbox">
+        <h4>NOTATION DETAILLEE</h4>
+        <div id="crit-inputs"></div>
+        <div class="totbox">
+          <div class="totnum" id="live-score">0.0</div>
+          <div class="totinfo"><strong>Note totale</strong>sur 20 points</div>
+        </div>
+      </div>
+      <div id="extra"></div>
+    </div>
+    <div class="mfoot">
+      <button class="btnd" id="del-btn" style="display:none" onclick="delItem()">Supprimer</button>
+      <button class="btns" onclick="cm('mod-add')">Annuler</button>
+      <button class="btn" onclick="save()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="overlay" id="mod-det" onclick="oclk(event,'mod-det')">
+  <div class="modal">
+    <div class="mhead">
+      <div class="mtitle" id="det-title">DETAILS</div>
+      <button class="mclose" onclick="cm('mod-det')">&#x2715;</button>
+    </div>
+    <div class="mbody" id="det-body"></div>
+    <div class="mfoot">
+      <button class="btns" onclick="editItem()">&#x270F; Modifier</button>
+      <button class="btn" onclick="cm('mod-det')">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<!-- BACKUP MODAL -->
+<div class="overlay" id="mod-bk" onclick="oclk(event,'mod-bk')">
+  <div class="modal">
+    <div class="mhead">
+      <div class="mtitle">SAUVEGARDE</div>
+      <button class="mclose" onclick="cm('mod-bk')">&#x2715;</button>
+    </div>
+    <div class="mbody">
+      <div class="bkopts">
+        <div class="bkcard" onclick="expData()">
+          <div class="bki">&#128229;</div>
+          <div class="bkt">EXPORTER</div>
+          <div class="bkd">Sauvegarder toutes tes donnees dans un fichier</div>
+        </div>
+        <div class="bkcard" onclick="document.getElementById('imp-file').click()">
+          <div class="bki">&#128228;</div>
+          <div class="bkt">IMPORTER</div>
+          <div class="bkd">Restaurer depuis un fichier de sauvegarde</div>
+        </div>
+      </div>
+      <input type="file" id="imp-file" accept=".json" style="display:none" onchange="impData(event)">
+      <div class="bkinfo" id="bk-info"></div>
+    </div>
+    <div class="mfoot"><button class="btn" onclick="cm('mod-bk')">Fermer</button></div>
+  </div>
+</div>
+
+<!-- INSTALL BANNER -->
+<div class="ibanner" id="ibanner">
+  <div class="iico" id="iico">&#127916;</div>
+  <div class="itxt"><strong>Installer UNIVERSE</strong><span>Acces rapide depuis l'ecran d'accueil</span></div>
+  <div class="iacts">
+    <button class="idis" onclick="disBanner()">Plus tard</button>
+    <button class="ibtn" onclick="instApp()">Installer</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var KEY = 'universe_v4';
+var CY = new Date().getFullYear().toString();
+var TMDB_KEY = '6a33084f9f4ea1d89a33bac3362c3824';
+var RAWG_KEY = '8545873ab2414a5a86acd6c4526c43e2';
+var TMDB_IMG = 'https://image.tmdb.org/t/p/w500';
+
+var CFG = {
+  films:  { e:'&#127916;', lbl:'Films',     sub:'Cinema',       ml:'Realisateur', sl:'Vu le',       nsl:'Non vu',
+    cr:[{k:'histoire',l:'Histoire / Emotion',m:8},{k:'acting',l:'Acting / Acteurs',m:4},{k:'musique',l:'Musique',m:3},{k:'visuel',l:'Visuel / Image',m:3},{k:'rythme',l:'Rythme / Pacing',m:2}] },
+  series: { e:'&#128250;', lbl:'Series',    sub:'Television',   ml:'Showrunner',  sl:'Terminee le', nsl:'En cours / Non vue',
+    cr:[{k:'histoire',l:'Histoire / Emotion',m:8},{k:'acting',l:'Acting / Acteurs',m:4},{k:'musique',l:'Musique',m:3},{k:'visuel',l:'Visuel / Image',m:3},{k:'rythme',l:'Rythme / Pacing',m:2}] },
+  livres: { e:'&#128218;', lbl:'Livres',    sub:'Bibliotheque',  ml:'Auteur',     sl:'Lu le',       nsl:'Non lu',
+    cr:[{k:'histoire',l:'Histoire / Emotion',m:8},{k:'personnages',l:'Personnages',m:5},{k:'ecriture',l:'Ecriture / Style',m:4},{k:'univers',l:'Univers / Immersion',m:3}] },
+  jeux:   { e:'&#127918;', lbl:'Jeux video', sub:'Gaming',      ml:'Studio',      sl:'Termine le',  nsl:'Non termine',
+    cr:[{k:'histoire',l:'Histoire',m:6},{k:'visuel',l:'Visuel / Graphismes',m:5},{k:'musique',l:'Musique / Son',m:4},{k:'gameplay',l:'Gameplay',m:5}] }
+};
+var PLATS = ['PS5','PS4','Xbox Series','Xbox One','Nintendo Switch','PC','Mobile','Autre'];
+var GENRES = {
+  films:  ['Action','Comedie','Drame','Fantaisie','Horreur','Romance','SF','Thriller','Animation','Documentaire','Autre'],
+  series: ['Action','Comedie','Drame','Fantaisie','Horreur','Romance','SF','Thriller','Animation','Documentaire','Autre'],
+  livres: ['Roman','Fantasy','SF','Policier','Romance','Thriller','Biographie','BD/Manga','Essai','Autre'],
+  jeux:   ['Action','RPG','FPS','Aventure','Simulation','Sport','Strategie','Puzzle','Plateforme','Autre']
+};
+
+function ldb() { try { var r=localStorage.getItem(KEY); if(r) return JSON.parse(r); } catch(e){} return {films:[],series:[],livres:[],jeux:[]}; }
+function sdb() { localStorage.setItem(KEY, JSON.stringify(db)); }
+var db = ldb();
+var cu = 'films', cf = 'best', cp = 'all', eid = null, did = null;
+var searchTimer = null;
+
+function tot(item, u) {
+  var s=0, cr=CFG[u].cr;
+  for(var i=0;i<cr.length;i++) s+=parseFloat((item.scores&&item.scores[cr[i].k])||0);
+  return s;
+}
+function prog(item) {
+  if(!item.seasons||!item.seasons.length) return {w:0,t:0,p:0};
+  var w=0,t=0;
+  for(var i=0;i<item.seasons.length;i++){w+=parseInt(item.seasons[i].watched)||0;t+=parseInt(item.seasons[i].total)||0;}
+  return {w:w,t:t,p:t>0?Math.round(w/t*100):0};
+}
+function esc(s) { if(!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function gid() { return Date.now().toString(36)+Math.random().toString(36).substr(2,5); }
+
+var _tt;
+function toast(msg) {
+  var el=document.getElementById('toast');
+  el.textContent=msg; el.classList.add('on');
+  clearTimeout(_tt); _tt=setTimeout(function(){ el.classList.remove('on'); },2600);
+}
+function fmtDate(d) {
+  if(!d) return '';
+  try { var x=new Date(d+'T12:00:00'); return x.toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'}); } catch(e){ return d; }
+}
+
+// =====================
+// TMDB SEARCH
+// =====================
+function onSearchKey(e) {
+  if(e.key==='Enter') { doSearch(); return; }
+  clearTimeout(searchTimer);
+  var val = document.getElementById('search-input').value.trim();
+  if(val.length >= 2) {
+    searchTimer = setTimeout(doSearch, 600);
+  } else {
+    hideResults();
+  }
+}
+
+function doSearch() {
+  var q = document.getElementById('search-input').value.trim();
+  if(!q) return;
+  if(cu==='films'||cu==='series') searchTMDB(q);
+  else if(cu==='livres') searchBooks(q);
+  else if(cu==='jeux') searchGames(q);
+}
+
+function searchTMDB(q) {
+  var el=document.getElementById('search-results');
+  el.classList.add('on');
+  el.innerHTML='<div class="search-loading">Recherche en cours...</div>';
+  var type=cu==='films'?'movie':'tv';
+  var url='https://api.themoviedb.org/3/search/'+type+'?api_key='+TMDB_KEY+'&query='+encodeURIComponent(q)+'&language=fr-FR&page=1';
+  var xhr=new XMLHttpRequest();
+  xhr.open('GET',url);
+  xhr.onload=function(){
+    if(xhr.status===200){var data=JSON.parse(xhr.responseText);showResults(data.results||[],'tmdb');}
+    else el.innerHTML='<div class="search-loading">Erreur de recherche.</div>';
+  };
+  xhr.onerror=function(){el.innerHTML='<div class="search-loading">Erreur reseau.</div>';};
+  xhr.send();
+}
+
+function searchBooks(q) {
+  var el=document.getElementById('search-results');
+  el.classList.add('on');
+  el.innerHTML='<div class="search-loading">Recherche en cours...</div>';
+  var url='https://www.googleapis.com/books/v1/volumes?q='+encodeURIComponent(q)+'&maxResults=8&langRestrict=fr';
+  var xhr=new XMLHttpRequest();
+  xhr.open('GET',url);
+  xhr.onload=function(){
+    if(xhr.status===200){var data=JSON.parse(xhr.responseText);showResults(data.items||[],'books');}
+    else el.innerHTML='<div class="search-loading">Erreur de recherche.</div>';
+  };
+  xhr.onerror=function(){el.innerHTML='<div class="search-loading">Erreur reseau.</div>';};
+  xhr.send();
+}
+
+function searchGames(q) {
+  var el=document.getElementById('search-results');
+  el.classList.add('on');
+  el.innerHTML='<div class="search-loading">Recherche en cours...</div>';
+  var url='https://api.rawg.io/api/games?key='+RAWG_KEY+'&search='+encodeURIComponent(q)+'&page_size=8';
+  var xhr=new XMLHttpRequest();
+  xhr.open('GET',url);
+  xhr.onload=function(){
+    if(xhr.status===200){var data=JSON.parse(xhr.responseText);showResults(data.results||[],'games');}
+    else el.innerHTML='<div class="search-loading">Erreur de recherche.</div>';
+  };
+  xhr.onerror=function(){el.innerHTML='<div class="search-loading">Erreur reseau.</div>';};
+  xhr.send();
+}
+
+function showResults(results, type) {
+  var el=document.getElementById('search-results');
+  if(!results.length){el.innerHTML='<div class="search-loading">Aucun resultat.</div>';return;}
+  var h='',max=results.length>6?6:results.length;
+  for(var i=0;i<max;i++){
+    var r=results[i];
+    var title='',year='',cover='',rid='',meta2='';
+    if(type==='tmdb'){
+      title=r.title||r.name||'';
+      var date=r.release_date||r.first_air_date||'';
+      year=date?date.substring(0,4):'';
+      cover=r.poster_path?TMDB_IMG+r.poster_path:'';
+      rid=r.id;
+      meta2=r.vote_average?'&#11088; '+parseFloat(r.vote_average).toFixed(1):'';
+    } else if(type==='books'){
+      var info=r.volumeInfo||{};
+      title=info.title||'';
+      var authors=info.authors?info.authors[0]:'';
+      year=info.publishedDate?info.publishedDate.substring(0,4):'';
+      cover=info.imageLinks?(info.imageLinks.thumbnail||info.imageLinks.smallThumbnail||''):'';
+      if(cover) cover=cover.replace('http://','https://');
+      rid=r.id;
+      meta2=authors;
+    } else if(type==='games'){
+      title=r.name||'';
+      year=r.released?r.released.substring(0,4):'';
+      cover=r.background_image||'';
+      rid=r.id;
+      meta2=r.rating?'&#11088; '+parseFloat(r.rating).toFixed(1):'';
+    }
+    var covHtml=cover?'<img class="sri-cover" src="'+cover+'" alt="" onerror="this.style.display='none'">':'<div class="sri-cover-ph">'+CFG[cu].e+'</div>';
+    h+='<div class="search-result-item" onclick="selectResult(''+rid+'',''+type+'')">'+
+      covHtml+'<div class="sri-info"><div class="sri-title">'+esc(title)+'</div>'+
+      '<div class="sri-meta">'+esc(year)+(meta2?' &nbsp;'+meta2:'')+'</div></div></div>';
+  }
+  el.innerHTML=h;
+}
+
+function hideResults() {
+  var el = document.getElementById('search-results');
+  el.classList.remove('on');
+  el.innerHTML = '';
+}
+
+function selectResult(rid, type) {
+  var el=document.getElementById('search-results');
+  el.innerHTML='<div class="search-loading">Chargement des details...</div>';
+  if(type==='tmdb'){
+    var mtype=cu==='films'?'movie':'tv';
+    var url='https://api.themoviedb.org/3/'+mtype+'/'+rid+'?api_key='+TMDB_KEY+'&language=fr-FR&append_to_response=credits';
+    var xhr=new XMLHttpRequest();xhr.open('GET',url);
+    xhr.onload=function(){if(xhr.status===200){fillFromTMDB(JSON.parse(xhr.responseText));hideResults();document.getElementById('search-input').value='';}else el.innerHTML='<div class="search-loading">Erreur.</div>';};
+    xhr.onerror=function(){el.innerHTML='<div class="search-loading">Erreur reseau.</div>';};xhr.send();
+  } else if(type==='books'){
+    var url='https://www.googleapis.com/books/v1/volumes/'+rid;
+    var xhr=new XMLHttpRequest();xhr.open('GET',url);
+    xhr.onload=function(){if(xhr.status===200){fillFromBooks(JSON.parse(xhr.responseText));hideResults();document.getElementById('search-input').value='';}else el.innerHTML='<div class="search-loading">Erreur.</div>';};
+    xhr.onerror=function(){el.innerHTML='<div class="search-loading">Erreur reseau.</div>';};xhr.send();
+  } else if(type==='games'){
+    var url='https://api.rawg.io/api/games/'+rid+'?key='+RAWG_KEY;
+    var xhr=new XMLHttpRequest();xhr.open('GET',url);
+    xhr.onload=function(){if(xhr.status===200){fillFromGame(JSON.parse(xhr.responseText));hideResults();document.getElementById('search-input').value='';}else el.innerHTML='<div class="search-loading">Erreur.</div>';};
+    xhr.onerror=function(){el.innerHTML='<div class="search-loading">Erreur reseau.</div>';};xhr.send();
+  }
+}
+
+function fillFromTMDB(d) {
+  var title = d.title || d.name || '';
+  var date = d.release_date || d.first_air_date || '';
+  var year = date ? date.substring(0,4) : '';
+  var cover = d.poster_path ? TMDB_IMG+d.poster_path : '';
+  var meta = '';
+  if(cu==='films' && d.credits && d.credits.crew) {
+    for(var i=0;i<d.credits.crew.length;i++) {
+      if(d.credits.crew[i].job==='Director') { meta=d.credits.crew[i].name; break; }
+    }
+  } else if(cu==='series' && d.created_by && d.created_by.length) {
+    meta = d.created_by[0].name;
+  }
+  var genre = '';
+  if(d.genres && d.genres.length) genre = d.genres[0].name;
+
+  var ti = document.getElementById('f-title'); if(ti) ti.value = title;
+  var me = document.getElementById('f-meta'); if(me) me.value = meta;
+  var yr = document.getElementById('f-year'); if(yr) yr.value = year;
+  var cv = document.getElementById('f-cover'); if(cv) cv.value = cover;
+
+  var gs = document.getElementById('f-genre');
+  if(gs && genre) {
+    var opts = gs.options;
+    for(var i=0;i<opts.length;i++) {
+      if(opts[i].value.toLowerCase()===genre.toLowerCase() || genre.toLowerCase().indexOf(opts[i].value.toLowerCase())>=0) {
+        gs.selectedIndex = i; break;
+      }
+    }
+  }
+  toast('Informations remplies automatiquement !');
+}
+
+function fillFromBooks(d) {
+  var info=d.volumeInfo||{};
+  var title=info.title||'';
+  var author=info.authors?info.authors[0]:'';
+  var year=info.publishedDate?info.publishedDate.substring(0,4):'';
+  var cover=info.imageLinks?(info.imageLinks.thumbnail||info.imageLinks.smallThumbnail||''):'';
+  if(cover) cover=cover.replace('http://','https://');
+  var genre='';
+  if(info.categories&&info.categories.length) genre=info.categories[0].split('/')[0].trim();
+  var ti=document.getElementById('f-title');if(ti)ti.value=title;
+  var me=document.getElementById('f-meta');if(me)me.value=author;
+  var yr=document.getElementById('f-year');if(yr)yr.value=year;
+  var cv=document.getElementById('f-cover');if(cv)cv.value=cover;
+  var gs=document.getElementById('f-genre');
+  if(gs&&genre){var opts=gs.options;for(var i=0;i<opts.length;i++){if(opts[i].value&&genre.toLowerCase().indexOf(opts[i].value.toLowerCase())>=0){gs.selectedIndex=i;break;}}}
+  toast('Informations remplies automatiquement !');
+}
+
+function fillFromGame(d) {
+  var title=d.name||'';
+  var year=d.released?d.released.substring(0,4):'';
+  var cover=d.background_image||'';
+  var studio='';
+  if(d.developers&&d.developers.length) studio=d.developers[0].name;
+  var genre='';
+  if(d.genres&&d.genres.length) genre=d.genres[0].name;
+  var ti=document.getElementById('f-title');if(ti)ti.value=title;
+  var me=document.getElementById('f-meta');if(me)me.value=studio;
+  var yr=document.getElementById('f-year');if(yr)yr.value=year;
+  var cv=document.getElementById('f-cover');if(cv)cv.value=cover;
+  var gs=document.getElementById('f-genre');
+  if(gs&&genre){var opts=gs.options;for(var i=0;i<opts.length;i++){if(opts[i].value&&genre.toLowerCase().indexOf(opts[i].value.toLowerCase())>=0){gs.selectedIndex=i;break;}}}
+  toast('Informations remplies automatiquement !');
+}
+
+// =====================
+// SWITCH
+// =====================
+function sw(u) {
+  cu=u; cf='best'; cp='all';
+  document.body.setAttribute('data-u',u);
+  var tabs=document.querySelectorAll('.ntab');
+  var us=['films','series','livres','jeux'];
+  for(var i=0;i<tabs.length;i++) tabs[i].classList.toggle('on',us[i]===u);
+  var colors={films:'#e8281e',series:'#6c5ce7',livres:'#27ae60',jeux:'#f39c12'};
+  var icos={films:'&#127916;',series:'&#128250;',livres:'&#128218;',jeux:'&#127918;'};
+  var mc=document.querySelector('meta[name="theme-color"]');
+  if(mc) mc.setAttribute('content',colors[u]);
+  var ii=document.getElementById('iico'); if(ii) ii.innerHTML=icos[u];
+  rHead(); rFilters(); rCards();
+}
+
+function rHead() {
+  var cfg=CFG[cu],items=db[cu];
+  document.getElementById('usub').textContent=cfg.sub;
+  document.getElementById('utxt').textContent=cfg.lbl.toUpperCase();
+  var n=items.length;
+  var s=0; for(var i=0;i<items.length;i++) s+=tot(items[i],cu);
+  var avg=n>0?(s/n).toFixed(1):'0.0';
+  var seen=0,fav=0;
+  for(var i=0;i<items.length;i++){if(items[i].seen)seen++;if(items[i].heart)fav++;}
+  document.getElementById('ustats').innerHTML=
+    '<div class="spill"><strong>'+n+'</strong>titre'+(n>1?'s':'')+'</div>'+
+    '<div class="spill"><strong>'+avg+'</strong>/20</div>'+
+    '<div class="spill">OK <strong>'+seen+'</strong></div>'+
+    '<div class="spill">Fav <strong>'+fav+'</strong></div>';
+}
+
+function rFilters() {
+  var h=
+    '<button class="fbtn'+(cf==='best'?' on':'')+'" onclick="sf(\'best\')">Meilleure note</button>'+
+    '<button class="fbtn heart'+(cf==='heart'?' on':'')+'" onclick="sf(\'heart\')">Favoris</button>'+
+    '<button class="fbtn'+(cf==='seen'?' on':'')+'" onclick="sf(\'seen\')">Termines</button>'+
+    '<button class="fbtn'+(cf==='unseen'?' on':'')+'" onclick="sf(\'unseen\')">A voir</button>'+
+    '<button class="fbtn'+(cf==='recent'?' on':'')+'" onclick="sf(\'recent\')">Recents</button>';
+  if(cu==='series') h+='<button class="fbtn'+(cf==='prog'?' on':'')+'" onclick="sf(\'prog\')">En cours</button>';
+  if(cu==='jeux'){
+    h+='<select class="fsel" onchange="sPlat(this.value)"><option value="all">Toutes plateformes</option>';
+    for(var i=0;i<PLATS.length;i++) h+='<option value="'+PLATS[i]+'"'+(cp===PLATS[i]?' selected':'')+'>'+PLATS[i]+'</option>';
+    h+='</select>';
+  }
+  document.getElementById('fbar').innerHTML=h;
+}
+function sf(f){cf=f;rFilters();rCards();}
+function sPlat(p){cp=p;rCards();}
+
+function sortScore(arr){arr.sort(function(a,b){return tot(b,cu)-tot(a,cu);});}
+function sortRecent(arr){arr.sort(function(a,b){return (b.addedAt||0)-(a.addedAt||0);});}
+
+function rCards() {
+  var el=document.getElementById('rankings');
+  var cfg=CFG[cu];
+  var all=db[cu].slice();
+  if(cu==='jeux'&&cp!=='all'){var tmp=[];for(var i=0;i<all.length;i++)if(all[i].platform===cp)tmp.push(all[i]);all=tmp;}
+  var allS=all.slice();sortScore(allS);
+  var showSec=(cf==='best'||cf==='seen'||cf==='recent');
+  if(cf==='heart'){var tmp=[];for(var i=0;i<all.length;i++)if(all[i].heart)tmp.push(all[i]);all=tmp;}
+  else if(cf==='unseen'){var tmp=[];for(var i=0;i<all.length;i++)if(!all[i].seen)tmp.push(all[i]);all=tmp;}
+  else if(cf==='prog'){var tmp=[];for(var i=0;i<all.length;i++){var p=prog(all[i]);if(p.p>0&&p.p<100)tmp.push(all[i]);}all=tmp;}
+
+  if(showSec){
+    var g1=[],g2=[],g3=[];
+    var src=db[cu].slice();
+    if(cu==='jeux'&&cp!=='all'){var tmp=[];for(var i=0;i<src.length;i++)if(src[i].platform===cp)tmp.push(src[i]);src=tmp;}
+    for(var i=0;i<src.length;i++){
+      var it=src[i];
+      var sy=it.seenDate?it.seenDate.substring(0,4):'';
+      var sty=it.seen&&sy===CY;
+      if(sty&&it.releaseYear===CY)g1.push(it);
+      else if(sty&&it.releaseYear!==CY)g2.push(it);
+      else g3.push(it);
+    }
+    if(cf==='recent'){sortRecent(g1);sortRecent(g2);sortRecent(g3);}
+    else{sortScore(g1);sortScore(g2);sortScore(g3);}
+    var sl={films:'vus',series:'terminees',livres:'lus',jeux:'termines'};
+    var secs=[
+      {t:'NOUVEAUTES '+CY,s:'Parus et '+sl[cu]+' en '+CY,items:g1},
+      {t:'DECOUVERTES '+CY,s:sl[cu]+' en '+CY+' - parus avant '+CY,items:g2},
+      {t:'COLLECTION',s:'Non termines - vus avant '+CY,items:g3}
+    ];
+    var h='';
+    for(var s=0;s<secs.length;s++){
+      var sec=secs[s];
+      h+='<div class="slabel">'+sec.t+' <span>'+sec.s+'</span></div><div class="grid">';
+      if(!sec.items.length) h+='<div class="empty"><div class="ei">'+cfg.e+'</div><h3>Aucun contenu ici</h3></div>';
+      else for(var i=0;i<sec.items.length;i++) h+=rCard(sec.items[i],i,allS,cfg);
+      h+='</div>';
+    }
+    h+='<div class="grid"><div class="addcard" onclick="openAdd()"><div class="addicon">+</div><div>Ajouter</div></div></div>';
+    el.innerHTML=h;
+  } else {
+    if(cf==='recent')sortRecent(all);else sortScore(all);
+    var lbls={heart:'FAVORIS',unseen:'A VOIR',prog:'EN COURS'};
+    var h='<div class="slabel">'+(lbls[cf]||'COLLECTION')+'</div><div class="grid">';
+    if(!all.length){
+      var msgs={heart:'Aucun favori.',unseen:'Tout est termine !',prog:'Aucune serie en cours.'};
+      h+='<div class="empty"><div class="ei">'+cfg.e+'</div><h3>'+(msgs[cf]||'Aucun contenu.')+'</h3></div>';
+    } else for(var i=0;i<all.length;i++) h+=rCard(all[i],i,allS,cfg);
+    h+='<div class="addcard" onclick="openAdd()"><div class="addicon">+</div><div>Ajouter</div></div></div>';
+    el.innerHTML=h;
+  }
+}
+
+function rCard(item,idx,allS,cfg){
+  var t=tot(item,cu),pct=(t/20*100).toFixed(0),rank=1;
+  for(var i=0;i<allS.length;i++)if(allS[i].id===item.id){rank=i+1;break;}
+  var sb=item.seen?'<div class="cseen">OK '+(item.seenDate?fmtDate(item.seenDate):'Termine')+'</div>':'';
+  var cov=item.cover?'<div class="ccover"><img src="'+esc(item.cover)+'" alt="" loading="lazy">'+sb+'</div>':'<div class="cph">'+cfg.e+'</div>';
+  var ex='';
+  if(cu==='jeux'&&item.platform)ex+='<div class="cplat">'+esc(item.platform)+'</div>';
+  if(cu==='series'&&item.seasons&&item.seasons.length){var p=prog(item);ex+='<div class="cprog"><div class="cprog-txt">S'+item.seasons.length+' - '+p.w+'/'+p.t+' ep ('+p.p+'%)</div><div class="cprog-bar"><div class="cprog-fill" style="width:'+p.p+'%"></div></div></div>';}
+  var yr=item.releaseYear?' - '+item.releaseYear:'';
+  return '<div class="card" onclick="openDet(\''+item.id+'\')" style="animation:none">'+
+    '<div class="crank">#'+rank+'</div>'+
+    '<button class="cheart'+(item.heart?' on':'')+'" onclick="tHeart(event,\''+item.id+'\')">&#9829;</button>'+
+    cov+'<div class="cbody"><div class="ctitle" title="'+esc(item.title)+'">'+esc(item.title)+'</div>'+
+    '<div class="cmeta">'+esc(item.meta||'')+yr+'</div>'+
+    '<div class="crow"><div class="cscore">'+t.toFixed(1)+'<small>/20</small></div>'+
+    '<div class="cbar"><div class="cbarfill" style="width:'+pct+'%"></div></div></div>'+ex+'</div></div>';
+}
+
+function tHeart(e,id){
+  e.stopPropagation();
+  var item=null;for(var i=0;i<db[cu].length;i++)if(db[cu][i].id===id){item=db[cu][i];break;}
+  if(!item)return;
+  item.heart=!item.heart;sdb();rHead();rCards();
+  toast(item.heart?'Ajoute aux favoris !':'Retire des favoris');
+}
+
+function tsd(){
+  var c=document.getElementById('f-seen').checked;
+  var d=document.getElementById('f-sdate');
+  d.style.display=c?'block':'none';
+  if(c&&!d.value)d.value=new Date().toISOString().split('T')[0];
+}
+
+function openAdd(id){
+  eid=id||null;
+  var cfg=CFG[cu];
+  var item=null;if(eid)for(var i=0;i<db[cu].length;i++)if(db[cu][i].id===eid){item=db[cu][i];break;}
+  document.getElementById('mod-add-title').textContent=eid?'MODIFIER':'AJOUTER';
+  document.getElementById('del-btn').style.display=eid?'block':'none';
+
+  // Show search for all universes
+  var ss=document.getElementById('search-section');
+  if(ss) ss.style.display='block';
+  hideResults();
+  var si=document.getElementById('search-input');
+  if(si){
+    si.value='';
+    var phs={films:'Rechercher un film...',series:'Rechercher une serie...',livres:'Rechercher un livre...',jeux:'Rechercher un jeu video...'};
+    si.placeholder=phs[cu]||'Rechercher...';
+  }
+
+  var fh=
+    '<div class="fg full"><label>Titre *</label><input id="f-title" type="text" placeholder="Titre..." value="'+esc(item?item.title:'')+'"></div>'+
+    '<div class="fg"><label>'+cfg.ml+'</label><input id="f-meta" type="text" placeholder="'+cfg.ml+'..." value="'+esc(item?item.meta:'')+'"></div>'+
+    '<div class="fg"><label>Annee de sortie</label><input id="f-year" type="number" placeholder="2024" min="1888" max="2099" value="'+esc(item?item.releaseYear:'')+'"></div>'+
+    '<div class="fg"><label>Genre</label><select id="f-genre"><option value="">Choisir...</option>';
+  var gs=GENRES[cu];
+  for(var i=0;i<gs.length;i++)fh+='<option value="'+gs[i]+'"'+(item&&item.genre===gs[i]?' selected':'')+'>'+gs[i]+'</option>';
+  fh+='</select></div>';
+  fh+='<div class="fg full"><label>Image couverture (URL)</label><input id="f-cover" type="url" placeholder="https://... (rempli auto via recherche)" value="'+esc(item?item.cover:'')+'"></div>';
+  if(cu==='jeux'){
+    fh+='<div class="fg"><label>Plateforme</label><select id="f-plat"><option value="">Choisir...</option>';
+    for(var i=0;i<PLATS.length;i++)fh+='<option value="'+PLATS[i]+'"'+(item&&item.platform===PLATS[i]?' selected':'')+'>'+PLATS[i]+'</option>';
+    fh+='</select></div>';
+  }
+  document.getElementById('ffields').innerHTML=fh;
+
+  var sc=document.getElementById('f-seen');
+  var sd=document.getElementById('f-sdate');
+  sc.checked=item?!!item.seen:false;
+  sd.value=item&&item.seenDate?item.seenDate:'';
+  sd.style.display=item&&item.seen?'block':'none';
+  document.getElementById('seen-lbl').textContent=cfg.sl.replace(' le','')+' / Termine';
+  document.getElementById('seen-sub').textContent=item&&item.seen&&item.seenDate?cfg.sl+' '+fmtDate(item.seenDate):'Cochez si termine';
+
+  var ch='';var cr=cfg.cr;
+  for(var i=0;i<cr.length;i++){
+    var v=item&&item.scores&&item.scores[cr[i].k]!==undefined?item.scores[cr[i].k]:0;
+    ch+='<div class="crow2"><div class="clbl">'+cr[i].l+'<small>/'+cr[i].m+'</small></div>'+
+      '<div class="cinp"><input type="range" id="cr-'+cr[i].k+'" min="0" max="'+cr[i].m+'" step="0.5" value="'+v+'" oninput="uScore();document.getElementById(\'cv-'+cr[i].k+'\').textContent=parseFloat(this.value).toFixed(1)+\'/'+cr[i].m+'\'">'+
+      '<div class="cval" id="cv-'+cr[i].k+'">'+parseFloat(v).toFixed(1)+'/'+cr[i].m+'</div></div></div>';
+  }
+  document.getElementById('crit-inputs').innerHTML=ch;
+
+  var ex='';
+  if(cu==='series'){
+    var seas=item&&item.seasons&&item.seasons.length?item.seasons:[{total:10,watched:0}];
+    ex='<div class="rbox"><h4>SUIVI EPISODES</h4><div id="seas-list">'+rSeas(seas)+'</div>'+
+       '<button type="button" class="btns" style="margin-top:9px;font-size:12px;" onclick="addSea()">+ Ajouter saison</button></div>';
+  }
+  document.getElementById('extra').innerHTML=ex;
+  uScore();om('mod-add');
+}
+
+function rSeas(seas){
+  var h='';
+  for(var i=0;i<seas.length;i++){
+    h+='<div class="srow" id="sr-'+i+'"><div class="slbl2">Saison '+(i+1)+'</div>'+
+      '<div class="sinp"><input type="number" id="sw-'+i+'" min="0" value="'+(seas[i].watched||0)+'" style="width:50px;text-align:center;">'+
+      '<span class="sep2"> / </span><input type="number" id="st-'+i+'" min="1" value="'+(seas[i].total||10)+'" style="width:50px;text-align:center;">'+
+      '<span class="sep2"> ep.</span>'+(i>0?'<button type="button" onclick="rmSea('+i+')" style="background:none;border:none;color:#e74c3c;cursor:pointer;margin-left:4px;font-size:14px;">x</button>':'')+
+      '</div></div>';
+  }
+  return h;
+}
+function addSea(){
+  var lst=document.getElementById('seas-list');
+  var idx=lst.querySelectorAll('.srow').length;
+  var d=document.createElement('div');
+  d.innerHTML='<div class="srow" id="sr-'+idx+'"><div class="slbl2">Saison '+(idx+1)+'</div>'+
+    '<div class="sinp"><input type="number" id="sw-'+idx+'" min="0" value="0" style="width:50px;text-align:center;">'+
+    '<span class="sep2"> / </span><input type="number" id="st-'+idx+'" min="1" value="10" style="width:50px;text-align:center;">'+
+    '<span class="sep2"> ep.</span><button type="button" onclick="rmSea('+idx+')" style="background:none;border:none;color:#e74c3c;cursor:pointer;margin-left:4px;font-size:14px;">x</button>'+
+    '</div></div>';
+  lst.appendChild(d.firstElementChild);
+}
+function rmSea(idx){
+  var r=document.getElementById('sr-'+idx);
+  if(r){r.remove();var lbls=document.querySelectorAll('#seas-list .slbl2');for(var i=0;i<lbls.length;i++)lbls[i].textContent='Saison '+(i+1);}
+}
+function uScore(){
+  var cr=CFG[cu].cr,s=0;
+  for(var i=0;i<cr.length;i++){var el=document.getElementById('cr-'+cr[i].k);if(el)s+=parseFloat(el.value)||0;}
+  document.getElementById('live-score').textContent=s.toFixed(1);
+}
+
+function save(){
+  var ti=document.getElementById('f-title');
+  if(!ti||!ti.value.trim()){toast('Le titre est obligatoire');return;}
+  var cfg=CFG[cu],sc={};
+  for(var i=0;i<cfg.cr.length;i++){var el=document.getElementById('cr-'+cfg.cr[i].k);sc[cfg.cr[i].k]=el?parseFloat(el.value):0;}
+  var seen=document.getElementById('f-seen').checked;
+  var sd=seen?(document.getElementById('f-sdate').value||''):'';
+  var seas=[];
+  if(cu==='series'){
+    var lst=document.getElementById('seas-list');
+    if(lst){
+      var rows=lst.querySelectorAll('.srow');
+      for(var i=0;i<rows.length;i++){
+        var rid=rows[i].id.replace('sr-','');
+        seas.push({watched:parseInt(document.getElementById('sw-'+rid)&&document.getElementById('sw-'+rid).value)||0,total:parseInt(document.getElementById('st-'+rid)&&document.getElementById('st-'+rid).value)||10});
+      }
+    }
+  }
+  var ex=null;if(eid)for(var i=0;i<db[cu].length;i++)if(db[cu][i].id===eid){ex=db[cu][i];break;}
+  var item={id:eid||gid(),title:ti.value.trim(),meta:document.getElementById('f-meta').value.trim(),
+    releaseYear:document.getElementById('f-year').value,genre:document.getElementById('f-genre').value,
+    cover:document.getElementById('f-cover').value.trim(),scores:sc,seen:seen,seenDate:sd,
+    heart:ex?ex.heart:false,addedAt:ex?ex.addedAt:Date.now()};
+  if(cu==='jeux'){var fp=document.getElementById('f-plat');item.platform=fp?fp.value:'';}
+  if(cu==='series')item.seasons=seas;
+  if(eid){for(var i=0;i<db[cu].length;i++)if(db[cu][i].id===eid){db[cu][i]=item;break;}}
+  else db[cu].push(item);
+  sdb();cm('mod-add');rHead();rCards();
+  toast(eid?'Modifie !':'Ajoute a la collection !');eid=null;
+}
+
+function delItem(){
+  if(!eid)return;
+  if(!confirm('Supprimer ?'))return;
+  var tmp=[];for(var i=0;i<db[cu].length;i++)if(db[cu][i].id!==eid)tmp.push(db[cu][i]);
+  db[cu]=tmp;sdb();cm('mod-add');rHead();rCards();toast('Supprime.');eid=null;
+}
+
+function openDet(id){
+  did=id;var item=null;
+  for(var i=0;i<db[cu].length;i++)if(db[cu][i].id===id){item=db[cu][i];break;}
+  if(!item)return;
+  var cfg=CFG[cu],t=tot(item,cu);
+  document.getElementById('det-title').textContent=item.title.toUpperCase();
+  var cov=item.cover?'<div class="dcover"><img src="'+esc(item.cover)+'" alt=""></div>':'<div class="dcph">'+cfg.e+'</div>';
+  var tags='';
+  if(item.meta)tags+='<span class="dtag">'+esc(item.meta)+'</span>';
+  if(item.releaseYear)tags+='<span class="dtag">'+esc(item.releaseYear)+'</span>';
+  if(item.genre)tags+='<span class="dtag">'+esc(item.genre)+'</span>';
+  if(cu==='jeux'&&item.platform)tags+='<span class="dtag">'+esc(item.platform)+'</span>';
+  if(item.seen)tags+='<span class="dtag seen">OK '+(item.seenDate?cfg.sl+' '+fmtDate(item.seenDate):'Termine')+'</span>';
+  else tags+='<span class="dtag unseen">'+cfg.nsl+'</span>';
+  var bars='<div class="bars">',cr=cfg.cr;
+  for(var i=0;i<cr.length;i++){
+    var v=item.scores&&item.scores[cr[i].k]||0,p=(v/cr[i].m*100).toFixed(0);
+    bars+='<div class="brow"><div class="blbl">'+cr[i].l+'</div><div class="btrack"><div class="bfill" style="width:'+p+'%"></div></div><div class="bval">'+parseFloat(v).toFixed(1)+'/'+cr[i].m+'</div></div>';
+  }
+  bars+='</div>';
+  var seas='';
+  if(cu==='series'&&item.seasons&&item.seasons.length){
+    var pr=prog(item);
+    seas='<div style="margin-top:15px;"><div class="slabel" style="font-size:13px;">PROGRESSION <span>'+pr.w+'/'+pr.t+' ep ('+pr.p+'%)</span></div><div class="sgrid">';
+    for(var i=0;i<item.seasons.length;i++){var s=item.seasons[i],p=s.total>0?Math.round((s.watched||0)/s.total*100):0;seas+='<div class="sc"><div class="sn">S'+(i+1)+'</div><div class="sp">'+(s.watched||0)+'/'+s.total+'</div><div class="spb"><div class="spbf" style="width:'+p+'%"></div></div></div>';}
+    seas+='</div></div>';
+  }
+  var cid='r-'+id;
+  document.getElementById('det-body').innerHTML=
+    '<div class="drow">'+cov+'<div class="dinfo"><div class="dtitle">'+esc(item.title)+'</div><div class="dtags">'+tags+'</div>'+
+    '<div class="dscore">'+t.toFixed(1)+'<small>/20</small></div>'+
+    '<button class="dhbtn'+(item.heart?' on':'')+'" onclick="tHD(\''+id+'\')">&#9829; '+(item.heart?'Favori':'Ajouter favori')+'</button></div></div>'+
+    '<div class="slabel" style="font-size:13px;">NOTES DETAILLEES</div>'+bars+
+    '<div class="radar-wrap"><canvas id="'+cid+'" width="240" height="240"></canvas></div>'+seas;
+  om('mod-det');
+  setTimeout(function(){drawR(cid,item,cfg);},60);
+}
+
+function tHD(id){
+  var item=null;for(var i=0;i<db[cu].length;i++)if(db[cu][i].id===id){item=db[cu][i];break;}
+  if(!item)return;item.heart=!item.heart;sdb();rHead();rCards();
+  var b=document.querySelector('.dhbtn');if(b){b.classList.toggle('on',item.heart);b.innerHTML='&#9829; '+(item.heart?'Favori':'Ajouter favori');}
+  toast(item.heart?'Ajoute aux favoris !':'Retire des favoris');
+}
+function editItem(){cm('mod-det');setTimeout(function(){openAdd(did);},200);}
+
+function drawR(cid,item,cfg){
+  var canvas=document.getElementById(cid);if(!canvas)return;
+  var ctx=canvas.getContext('2d'),W=canvas.width,H=canvas.height,cx=W/2,cy=H/2,r=Math.min(W,H)/2-34,n=cfg.cr.length;
+  var ac=getComputedStyle(document.body).getPropertyValue('--ac').trim();
+  ctx.clearRect(0,0,W,H);
+  var lvls=[.25,.5,.75,1];
+  for(var l=0;l<lvls.length;l++){ctx.beginPath();for(var i=0;i<n;i++){var a=(i/n)*Math.PI*2-Math.PI/2,x=cx+Math.cos(a)*r*lvls[l],y=cy+Math.sin(a)*r*lvls[l];if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);}ctx.closePath();ctx.strokeStyle='rgba(255,255,255,.1)';ctx.lineWidth=1;ctx.stroke();}
+  for(var i=0;i<n;i++){var a=(i/n)*Math.PI*2-Math.PI/2;ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+Math.cos(a)*r,cy+Math.sin(a)*r);ctx.strokeStyle='rgba(255,255,255,.1)';ctx.lineWidth=1;ctx.stroke();}
+  ctx.beginPath();
+  for(var i=0;i<n;i++){var v=item.scores&&item.scores[cfg.cr[i].k]||0,rat=v/cfg.cr[i].m,a=(i/n)*Math.PI*2-Math.PI/2,x=cx+Math.cos(a)*r*rat,y=cy+Math.sin(a)*r*rat;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);}
+  ctx.closePath();ctx.fillStyle='rgba(255,255,255,.07)';ctx.fill();ctx.strokeStyle=ac;ctx.lineWidth=2;ctx.stroke();
+  for(var i=0;i<n;i++){var v=item.scores&&item.scores[cfg.cr[i].k]||0,rat=v/cfg.cr[i].m,a=(i/n)*Math.PI*2-Math.PI/2;ctx.beginPath();ctx.arc(cx+Math.cos(a)*r*rat,cy+Math.sin(a)*r*rat,4,0,Math.PI*2);ctx.fillStyle=ac;ctx.fill();ctx.font='10px DM Sans,sans-serif';ctx.fillStyle='rgba(255,255,255,.65)';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(cfg.cr[i].l.split('/')[0].split(' ').slice(0,2).join(' '),cx+Math.cos(a)*(r+20),cy+Math.sin(a)*(r+20));}
+}
+
+function om(id){document.getElementById(id).classList.add('on');document.body.style.overflow='hidden';}
+function cm(id){document.getElementById(id).classList.remove('on');document.body.style.overflow='';}
+function oclk(e,id){if(e.target===document.getElementById(id))cm(id);}
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){cm('mod-add');cm('mod-det');cm('mod-bk');}});
+
+function openBk(){
+  var n=db.films.length,s=db.series.length,l=db.livres.length,j=db.jeux.length;
+  document.getElementById('bk-info').innerHTML='<strong>Tes donnees :</strong><br>'+
+    '&#127916; '+n+' film'+(n>1?'s':'')+' | &#128250; '+s+' serie'+(s>1?'s':'')+' | &#128218; '+l+' livre'+(l>1?'s':'')+' | &#127918; '+j+' jeu'+(j>1?'x':'')+'<br><br>'+
+    '<strong>Comment ca marche :</strong><br>Exporter avant chaque mise a jour, Importer apres pour retrouver tes donnees.';
+  om('mod-bk');
+}
+function expData(){
+  var bk={version:1,date:new Date().toISOString(),data:db};
+  var blob=new Blob([JSON.stringify(bk,null,2)],{type:'application/json'});
+  var url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download='universe-backup.json';document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+  toast('Sauvegarde exportee !');
+}
+function impData(e){
+  var f=e.target.files[0];if(!f)return;
+  var rd=new FileReader();
+  rd.onload=function(ev){
+    try{
+      var bk=JSON.parse(ev.target.result);
+      if(!bk.data||!bk.data.films){toast('Fichier invalide !');return;}
+      if(!confirm('Importer ? Tes donnees actuelles seront remplacees.'))return;
+      db=bk.data;if(!db.films)db.films=[];if(!db.series)db.series=[];if(!db.livres)db.livres=[];if(!db.jeux)db.jeux=[];
+      sdb();rHead();rCards();cm('mod-bk');toast('Donnees importees !');
+    }catch(err){toast('Erreur import !');}
+  };
+  rd.readAsText(f);e.target.value='';
+}
+
+var dp=null;
+window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();dp=e;if(!localStorage.getItem('inst_dis'))setTimeout(function(){document.getElementById('ibanner').classList.add('on');},4000);});
+window.addEventListener('appinstalled',function(){document.getElementById('ibanner').classList.remove('on');toast('UNIVERSE installe !');});
+function instApp(){if(dp){dp.prompt();dp=null;}else toast("Menu Chrome > Ajouter a l'ecran d'accueil");document.getElementById('ibanner').classList.remove('on');}
+function disBanner(){document.getElementById('ibanner').classList.remove('on');localStorage.setItem('inst_dis','1');}
+
+function seed(){
+  if(db.films.length||db.series.length||db.livres.length||db.jeux.length)return;
+  db.films=[{id:'f1',title:'Dune: Part Two',meta:'Denis Villeneuve',releaseYear:'2024',genre:'SF',cover:'https://image.tmdb.org/t/p/w500/8b8R8l88Qje9dn9OE8PY05Nxl1X.jpg',scores:{histoire:7.5,acting:3.5,musique:3,visuel:3,rythme:1.5},seen:true,seenDate:'2024-03-10',heart:true,addedAt:Date.now()-5},{id:'f2',title:'Oppenheimer',meta:'Christopher Nolan',releaseYear:'2023',genre:'Drame',cover:'https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg',scores:{histoire:7,acting:4,musique:2.5,visuel:2.5,rythme:1.5},seen:true,seenDate:'2023-08-15',heart:false,addedAt:Date.now()-4}];
+  db.series=[{id:'s1',title:'Succession',meta:'Jesse Armstrong',releaseYear:'2018',genre:'Drame',cover:'https://image.tmdb.org/t/p/w500/e2X4jTMki6543EbrNmGBNYgmYB1.jpg',scores:{histoire:8,acting:4,musique:3,visuel:2.5,rythme:2},seen:true,seenDate:'2023-06-01',heart:true,seasons:[{watched:10,total:10},{watched:10,total:10},{watched:9,total:9},{watched:10,total:10}],addedAt:Date.now()-4}];
+  db.livres=[];db.jeux=[];sdb();
+}
+seed();sw('films');
+</script>
+</body>
+</html>
